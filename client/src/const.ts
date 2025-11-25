@@ -1,17 +1,22 @@
-export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
-
-export const APP_TITLE = import.meta.env.VITE_APP_TITLE || "Monsters.ia";
-
-export const APP_LOGO = "https://placehold.co/128x128/8B5CF6/FFFFFF?text=M.ia";
-
-// Generate login URL at runtime so redirect URI reflects the current origin.
 export const getLoginUrl = () => {
-  const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
+  let oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
   const appId = import.meta.env.VITE_APP_ID;
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);
 
-  const url = new URL(`${oauthPortalUrl}/app-auth`);
+  // Se não tiver URL de portal configurada, só não quebra a tela
+  if (!oauthPortalUrl || !appId) {
+    console.warn("[Login] VITE_OAUTH_PORTAL_URL ou VITE_APP_ID não configurados.");
+    return "#";
+  }
+
+  // Garante que tem https://
+  if (!oauthPortalUrl.startsWith("http")) {
+    oauthPortalUrl = `https://${oauthPortalUrl}`;
+  }
+
+  const base = oauthPortalUrl.replace(/\/$/, "");
+  const url = new URL(`${base}/app-auth`);
   url.searchParams.set("appId", appId);
   url.searchParams.set("redirectUri", redirectUri);
   url.searchParams.set("state", state);
