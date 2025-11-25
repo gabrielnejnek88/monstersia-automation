@@ -1,16 +1,28 @@
+// Reexporta constantes compartilhadas
+export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+
+// Título do app usado no layout
+export const APP_TITLE =
+  (import.meta as any).env?.VITE_APP_TITLE || "Monsters IA";
+
+// Logo opcional (se quiser usar em algum lugar depois)
+export const APP_LOGO =
+  (import.meta as any).env?.VITE_APP_LOGO || "/logo.svg";
+
+// Gera a URL de login com base nas envs e no origin atual
 export const getLoginUrl = () => {
-  let oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
-  const appId = import.meta.env.VITE_APP_ID;
+  let oauthPortalUrl = (import.meta as any).env?.VITE_OAUTH_PORTAL_URL;
+  const appId = (import.meta as any).env?.VITE_APP_ID;
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);
 
-  // Se não tiver URL de portal configurada, só não quebra a tela
   if (!oauthPortalUrl || !appId) {
-    console.warn("[Login] VITE_OAUTH_PORTAL_URL ou VITE_APP_ID não configurados.");
+    console.warn(
+      "[Login] VITE_OAUTH_PORTAL_URL ou VITE_APP_ID não configurados."
+    );
     return "#";
   }
 
-  // Garante que tem https://
   if (!oauthPortalUrl.startsWith("http")) {
     oauthPortalUrl = `https://${oauthPortalUrl}`;
   }
